@@ -1,0 +1,61 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Android signing secrets and local properties
+android/release-key.jks
+android/keystore.properties
+android/signing.local.json
+android/signing.local.private.json
+android/signing*.json
+android/*.jks
+android/*.keystore
+android/local.properties
+
+# Android and Gradle build artifacts and caches
+.gradle
+.gradle/
+build/
+android/.gradle/
+android/.gradle-user-home/
+android/.kotlin/
+android/.module-build/
+android/build/
+android/app/build/
+android/.cxx/
+android/.externalNativeBuild/
+android/captures/
+android/lint/
+
+# Built binaries and traces
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.pftrace
+
+# Agent workspace artifacts
+.agents/
+

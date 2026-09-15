@@ -1,0 +1,47 @@
+{
+  "name": "hackathon-project",
+  "private": true,
+  "version": "1.2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"node server/server.cjs\" \"vite\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server/server.cjs",
+    "test:parser": "node tests/test-all.mjs",
+    "test:policy": "node tests/policy-runtime.test.mjs",
+    "test:retrieval": "node tests/retrieval-utils.test.mjs",
+    "test:embedding": "node tests/embedding-client.test.mjs",
+    "test:conversation": "node tests/conversation-responder.test.mjs",
+    "test:search-hardening": "node tests/search-engine-hardening.test.mjs",
+    "test:offline-brain-hardening": "node tests/offline-brain-hardening.test.mjs",
+    "test:next-features": "node tests/next-features-hardening.test.mjs",
+    "test:stability-forecast": "node tests/stability-forecast.test.mjs",
+    "test:platform-hardening": "node tests/platform-hardening.test.mjs",
+    "test:device-automation": "node tests/device-automation.test.mjs",
+    "test:document-parsers": "node tests/document-parsers.test.mjs",
+    "test:e2e": "node tests/e2e/runner.mjs",
+    "test:all": "npm run test:parser && npm run test:policy && npm run test:retrieval && npm run test:embedding && npm run test:conversation && npm run test:search-hardening && npm run test:offline-brain-hardening && npm run test:next-features && npm run test:stability-forecast && npm run test:platform-hardening && npm run test:device-automation && npm run test:document-parsers && npm run test:e2e",
+    "download:local-llm": "node scripts/download-local-llm-model.mjs",
+    "release:check": "node scripts/release-check.mjs",
+    "build:signed": "node scripts/build-signed-apk.mjs"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.1.0",
+    "concurrently": "^9.2.1",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.1.0",
+    "@capacitor/app-launcher": "^8.0.1",
+    "@capacitor/core": "^8.1.0",
+    "@capacitor/filesystem": "^8.1.2",
+    "@xenova/transformers": "^2.17.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mammoth": "^1.11.0",
+    "pdf-parse": "^2.4.5",
+    "pdfjs-dist": "^5.4.624",
+    "tesseract.js": "^7.0.0"
+  }
+}

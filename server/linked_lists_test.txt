@@ -1,0 +1,3 @@
+Chapter: Data Structures
+Linked Lists: Singly linked lists: representation and operations, doubly linked lists and circular linked lists, Comparing arrays and linked lists, Applications of linked lists.
+End of section.

@@ -1,0 +1,30 @@
+{
+    "packageId": "com.niceai.assistant",
+    "host": "niceai.netlify.app",
+    "name": "Nice — AI Assistant",
+    "launcherName": "Nice",
+    "display": "standalone",
+    "themeColor": "#06060e",
+    "themeColorDark": "#06060e",
+    "navigationColor": "#06060e",
+    "navigationColorDark": "#06060e",
+    "navigationDividerColor": "#06060e",
+    "navigationDividerColorDark": "#06060e",
+    "backgroundColor": "#06060e",
+    "enableNotifications": false,
+    "startUrl": "/",
+    "iconUrl": "https://niceai.netlify.app/icons/icon-512.svg",
+    "maskableIconUrl": "https://niceai.netlify.app/icons/icon-512.svg",
+    "shortcuts": [],
+    "signingKey": {
+        "path": "nice-keystore.jks",
+        "alias": "nice-key"
+    },
+    "appVersionCode": 1,
+    "appVersionName": "1.1.0",
+    "splashScreenFadeOutDuration": 300,
+    "enableSiteSettingsShortcut": true,
+    "isChromeOSOnly": false,
+    "orientation": "any",
+    "fingerprints": []
+}

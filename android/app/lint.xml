@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!-- Keep MANAGE_EXTERNAL_STORAGE for sideload distribution and suppress non-actionable wrapper version drift. -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
+</lint>

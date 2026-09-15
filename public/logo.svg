@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="50%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.2"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#0a0a1a"/>
+  
+  <!-- Outer ring -->
+  <circle cx="256" cy="256" r="220" fill="none" stroke="url(#ringGrad)" stroke-width="2"/>
+  
+  <!-- Inner accent ring -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#ringGrad)" stroke-width="0.5" opacity="0.4"/>
+  
+  <!-- Diamond accent (top) -->
+  <path d="M256 60 L268 80 L256 100 L244 80 Z" fill="url(#logoGrad)" opacity="0.8" filter="url(#glow)"/>
+  
+  <!-- Main "N" letterform — geometric, modern -->
+  <g filter="url(#glow)">
+    <path d="M170 340 L170 172 L190 172 L190 280 L310 172 L330 172 L330 340 L310 340 L310 232 L190 340 Z" 
+          fill="url(#logoGrad)"/>
+  </g>
+  
+  <!-- Accent dot -->
+  <circle cx="256" cy="380" r="8" fill="url(#logoGrad)" opacity="0.7"/>
+  
+  <!-- Subtle bottom arc -->
+  <path d="M180 420 Q256 450 332 420" fill="none" stroke="url(#ringGrad)" stroke-width="1.5" opacity="0.5"/>
+</svg>

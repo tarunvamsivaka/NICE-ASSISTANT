@@ -1,0 +1,6 @@
+The Chromatic Number Decision Problem is defined as follows:
+• Definition: Minimum number of colors needed to color graph so adjacent vertices differ.
+• Decision version: Given graph G and integer k, is chromatic number <= k?
+• Significance: NP Complete.
+• Applications: Scheduling, register allocation
+This concludes the properties of chromatic numbering in graph theory.

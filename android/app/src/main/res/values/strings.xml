@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">NICE ASSISTANT</string>
+    <string name="title_activity_main">NICE ASSISTANT</string>
+    <string name="floating_timer_done">Done</string>
+</resources>

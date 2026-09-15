@@ -1,0 +1,83 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:9.0.0'
+        classpath 'com.google.gms:google-services:4.4.4'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+apply from: "variables.gradle"
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+['capacitor-android', 'capacitor-app-launcher', 'capacitor-filesystem', 'capacitor-cordova-android-plugins'].each { moduleName ->
+    def moduleProject = findProject(":${moduleName}")
+    if (moduleProject != null) {
+        moduleProject.buildDir = file("${rootProject.projectDir}/.module-build/${moduleName}")
+    }
+}
+
+subprojects {
+    def quietJavaCompile = { javaTask ->
+        javaTask.options.warnings = false
+        javaTask.options.deprecation = false
+        def quietArgs = ['-nowarn', '-Xlint:none', '-Xlint:-deprecation', '-Xlint:-unchecked']
+        quietArgs.each { arg ->
+            if (!javaTask.options.compilerArgs.contains(arg)) {
+                javaTask.options.compilerArgs += [arg]
+            }
+        }
+    }
+
+    def quietKotlinCompile = { kotlinTask ->
+        if (!kotlinTask.hasProperty('kotlinOptions')) return
+        kotlinTask.kotlinOptions.suppressWarnings = true
+        kotlinTask.kotlinOptions.allWarningsAsErrors = false
+    }
+
+    configurations.configureEach {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        quietJavaCompile(delegate)
+    }
+    tasks.matching { it.name.endsWith('JavaWithJavac') && it.hasProperty('options') }.configureEach {
+        quietJavaCompile(delegate)
+    }
+
+    tasks.matching { it.class.name.endsWith('KotlinCompile') }.configureEach {
+        quietKotlinCompile(delegate)
+    }
+
+    afterEvaluate {
+        tasks.withType(JavaCompile).configureEach {
+            quietJavaCompile(delegate)
+        }
+        tasks.matching { it.name.endsWith('JavaWithJavac') && it.hasProperty('options') }.configureEach {
+            quietJavaCompile(delegate)
+        }
+        tasks.matching { it.class.name.endsWith('KotlinCompile') }.configureEach {
+            quietKotlinCompile(delegate)
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

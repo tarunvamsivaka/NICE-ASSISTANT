@@ -1,0 +1,2 @@
+Chapter 4: Data Link Layer
+Framing policies are essential rules in the data link layer. A framing policy dictates how network layer packets are encapsulated into frames, determining the start and end of a frame using bit stuffing or byte stuffing. The exact framing policy ensures reliable data transmission across the physical medium.

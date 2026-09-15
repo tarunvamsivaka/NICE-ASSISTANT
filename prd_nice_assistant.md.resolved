@@ -1,0 +1,78 @@
+# Product Requirements Document: Nice Offline Mobile Assistant
+
+**Version**: 1.0.0  
+**Status**: Draft  
+**Owner**: AI Assistant Team  
+
+---
+
+## 1. Executive Summary
+The **Nice Offline Mobile Assistant** is a privacy-first, high-performance personal assistant designed to operate entirely on-device. By leveraging Small Language Models (SLMs) and modern WebAssembly-based AI, it eliminates the need for cloud connectivity, ensuring data remains private and the assistant remains functional even in "off-grid" scenarios. It bridges the gap between web-based AI and native mobile automation.
+
+## 2. Target Audience
+- **Privacy Enthusiasts**: Users who do not want their data sent to cloud servers for processing.
+- **Low-Connectivity Users**: Individuals in areas with unreliable internet who still need intelligent assistance.
+- **Power Users**: Users seeking fast, local file search and device automation without cloud latency.
+- **Security-Conscious Organizations**: Entities requiring offline AI for confidential data handling.
+
+## 3. User Stories
+- *As a user in a remote area*, I want to ask my assistant for information from my local PDFs without an internet connection.
+- *As a privacy-focused user*, I want to use voice commands to set alarms and play music without my voice being recorded on a server.
+- *As a student*, I want to quickly search through hundreds of textbook pages for a specific concept using natural language.
+- *As a professional*, I want to take voice notes and have them transcribed instantly while traveling.
+
+## 4. Functional Requirements
+
+### 4.1 Voice Interaction & AI
+- **Wake Word Detection**: Identify a specific trigger word to activate the assistant.
+- **Offline speech-to-Text (STT)**: Transcribe user speech using `@xenova/transformers` (Whisper) completely offline.
+- **Text-to-Speech (TTS)**: Provide spoken responses using native system voices.
+- **Local SLM**: Process natural language queries using `@mlc-ai/web-llm` (WebLLM) on the device's CPU/GPU.
+- **Contextual Memory**: Maintain a short-term chat history for follow-up questions.
+
+### 4.2 Intelligence & File Parsing
+- **Deep-File Search**: Index and search local PDF, Docx, and Text files.
+- **Image OCR**: Extract text from images and screenshots using `Tesseract.js`.
+- **Sliding Window Scoring**: Use advanced ranking (BM25-lite) to find precise "pinpoint" answers within large documents.
+- **File Watcher**: Automatically detect and index new or modified files in specific directories.
+
+### 4.3 Device Automation
+- **App Launcher**: Open installed Android applications (Spotify, Maps, Calculator, etc.).
+- **Media Control**: Play, pause, and search for local audio files.
+- **Alarms & Timers**: Set, cancel, and manage system-level alarms and countdown timers.
+- **Calendar & Flashlight**: Native integration for scheduling and hardware controls (vibration, flashlight).
+
+### 4.4 Utility Features
+- **Smart Math**: Handle complex math/percentage calculations via natural language (e.g., "What is 15% of 850?").
+- **Local Notes**: Create, view, and delete notes persisted in `localStorage`.
+- **Battery & System Info**: Report current device status (battery level, storage stats).
+
+## 5. Non-Functional Requirements
+- **Privacy**: Zero data transmission to external servers.
+- **Performance**: 
+    - Search response time < 100ms.
+    - AI inference time optimized for mobile hardware (WebGPU/WASM).
+- **Efficiency**: Memory management logic to prevent crashes on 4GB RAM devices (5MB hardware cap for large file chunks).
+- **Offline-First**: All core models (Whisper, LLM) must be bundle-able or downloadable for permanent offline use.
+
+## 6. Technical Architecture
+- **Frontend**: Vite + Vanilla JavaScript + CSS (Glassmorphism design).
+- **Native Bridge**: Capacitor (coupling web views with Android hardware APIs).
+- **AI Engine**: 
+    - WebLLM (MLC-AI) for the Language Model.
+    - Transformers.js (ONNX) for Whisper STT.
+- **Data Layer**: 
+    - **IndexedDB**: Persistent file index and metadata.
+    - **LocalStorage**: User settings, chat history, and notes.
+    - **Filesystem API**: Native read/write access via `capacitor-filesystem`.
+
+## 7. UI/UX Vision
+- **Modern Aesthetic**: Dark mode support, smooth CSS animations, and a "vibrant" premium feel.
+- **Accessibility**: Clear visual indicators for listening/processing states.
+- **Responsiveness**: Mobile-first design that scales to tablets and desktops.
+
+## 8. Future Roadmap
+- **Vison Integration**: Local image classification and object detection.
+- **Plugin System**: Allow users to add custom automation scripts.
+- **Improved RAG**: Multi-modal search (searching images by content descriptions).
+- **Smart Home Integration**: Local control for IoT devices (Matter/Thread support).

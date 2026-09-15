@@ -1,0 +1,151 @@
+# Project Implementation Plan: "Nice" Offline AI Assistant
+
+## 1. Project Overview & Description
+"Nice" is a privacy-first, fully offline AI Assistant application designed primarily for Android devices (via Capacitor) and desktop web browsers. Unlike traditional AI assistants that send all user data to the cloud, Nice runs large language models (LLMs), Wake Word detection, Vector Embeddings, and Optical Character Recognition (OCR) directly on the device's edge hardware using WebGPU and WebAssembly.
+
+Its primary goal is to provide a fully transparent, highly responsive, and data-secure conversational interface capable of interacting with the device's native ecosystem (files, calendar, apps, alarms) without an internet connection.
+
+## 2. Core Functionalities
+The application is divided into several modules of functionality:
+
+### 2.1 Natural Language Processing & Local AI
+- **On-Device LLM Inference:** Uses ONNX Runtime Web and WebGPU to run a local language model for chatting and understanding context.
+- **Wake Word Detection:** Continuously listens for a specific trigger phrase (e.g., "Hey Nice") using an efficient, lightweight local audio-classification model.
+- **RAG (Retrieval-Augmented Generation):** Embeds local documents and knowledge using Transformer-based feature extraction (`@xenova/transformers`) and stores them in a local Vector Database (IndexedDB) for answering context-specific questions.
+
+### 2.2 Device & OS Integration
+- **Deep File Search (Native):** Recursively indexes the entire Android external storage, supporting over 50 file types (PDF, Word, TXT, Excel, Code). Extracts text and OCRs images.
+- **Intent Parsing System:** A regex and rule-based fallback system that can route immediate commands:
+  - App Launching (e.g., "Open Spotify")
+  - Alarm & Calendar Management
+  - Media Controls ("Play Bohemian Rhapsody")
+  - Weather parsing and mathematical expression evaluation (including "word math" like "two times four").
+
+### 2.3 Audio & Accessibility
+- **Speech-to-Text (STT):** Local transcription or Whisper-based models.
+- **Text-to-Speech (TTS):** Uses the native Android TTS engine or Web Speech API to read responses aloud.
+- **Floating Chat Head:** An overlay service (Service Window) that allows the assistant to be summoned from anywhere in the OS.
+
+---
+
+## 3. Technology Stack
+
+| Category | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Frontend UI/UX** | Vanilla HTML/CSS/JS, Vite | High performance, lightweight DOM manipulation without massive framework overhead. |
+| **Mobile Runtime** | Capacitor (v8) | Wraps the web app into a native Android APK, providing bridges to native device features. |
+| **Local AI Engine** | ONNX Runtime Web, `@xenova/transformers` | Runs AI models (LLMs, Whisper, Embeddings) locally using Wasm/WebGPU. |
+| **Text Extraction** | `pdfjs-dist`, `tesseract.js`, `mammoth` | Extracts raw text from PDFs, Images (OCR), and Word Documents respectively. |
+| **Database** | IndexedDB | Local storage of file metadata, text chunks, and vector embeddings for RAG. |
+
+---
+
+## 4. Software Development Lifecycle (Step-by-Step Approach)
+
+Building this from scratch follows a 5-phase approach.
+
+### Phase 1: Foundation & Project Setup
+1. **Initialize Project:** Create Vite vanilla JS template.
+2. **Capacitor Integration:** Install `@capacitor/core`, `@capacitor/android`, and initialize the [capacitor.config.json](file:///f:/Hackathon%20Project/capacitor.config.json).
+3. **UI Prototyping:** Build the chat interface, microphone button, and settings menu. Implement CSS variables for dark/light themes.
+4. **Permissions Architecture:** Implement a startup sequence that requests all necessary Android permissions (`RECORD_AUDIO`, `MANAGE_EXTERNAL_STORAGE`, `SYSTEM_ALERT_WINDOW`).
+
+### Phase 2: Core Assistant Logic & Intents
+1. **Command Parser:** Build [test-all.mjs](file:///f:/Hackathon%20Project/tests/test-all.mjs) first (TDD approach). Implement Regex-based extraction modules for Alarms, Calendars, App Launching, and Math.
+2. **Capacitor Plugins Integration:** Use the `@capacitor/app-launcher` to trigger Android intents for opening apps and setting alarms via standard URIs.
+3. **Speech Integration:** Wire up the `window.SpeechRecognition` (or polyfill) for listening to the user, and `window.speechSynthesis` for the assistant's voice.
+
+### Phase 3: The Offline AI & RAG Engine
+1. **Model Bundling:** Create scripts ([download-model.mjs](file:///f:/Hackathon%20Project/download-model.mjs), [download-tess.mjs](file:///f:/Hackathon%20Project/download-tess.mjs)) to pull required ONNX models locally into the `public/` directory so the APK ships with them.
+2. **Web Worker Threading:** Build [worker.js](file:///f:/Hackathon%20Project/src/clip-worker.js) to offload the heavy WebGPU LLM inference and embedding calculations so the main UI thread never freezes.
+3. **Vector Database:** Build a minimalist class wrapping IndexedDB to store 384-dimensional arrays (embeddings) and do Cosine Similarity matching for searches.
+
+### Phase 4: Native Android Capabilities & Indexing
+1. **File System Scanner ([filesys.js](file:///f:/Hackathon%20Project/src/filesys.js)):** Implement the recursive scanner utilizing `@capacitor/filesystem`. Handle Android 11+ Scoped Storage by falling back to `Filesystem.getUri` + `fetch` for reading file bytes.
+2. **Text Extraction Pipeline ([search-engine.js](file:///f:/Hackathon%20Project/src/search-engine.js)):** Integrate Tesseract for `.png/.jpg`, PDF.js for `.pdf`. Slice extracted text into paragraphs.
+3. **Background Services:** Implement the Android `Service` wrapper in Java to support the floating chat head overlay, keeping the WebView alive in the background.
+
+### Phase 5: Testing, Optimization, and Release
+1. **Performance Profiling:** Optimize memory limits. Throttle the file scanner (e.g., yielding every 30ms) to avoid "App Not Responding" (ANR) crashes on low-end phones.
+2. **Testing suite:** Expand the TDD suite to cover edge cases like division by zero in word math, or missing file extensions.
+3. **APK Build:** Run Android Studio/Gradle to generate the signed `release.apk` mapping `targetSdkVersion 34`.
+
+---
+
+## 5. Data Flow & Architecture Diagrams
+
+### 5.1 High-Level Architecture
+
+```mermaid
+graph TD
+    User([User Voice/Text]) --> UI[Frontend Chat Interface]
+    UI --> IntentParser{Intent Parser}
+    
+    IntentParser -- "Launch App, Alarm, Math" --> NativeBridge[Capacitor Native Bridge]
+    NativeBridge --> OS[Android OS Services]
+    
+    IntentParser -- "General Query" --> RAG[RAG & Search Engine]
+    IntentParser -- "File Search" --> RAG
+    
+    RAG --> FileSys[Local Storage Scanner]
+    FileSys --> VectorDB[(IndexedDB Vectors & Meta)]
+    
+    RAG --> AIWorker[[AI Web Worker Thread]]
+    AIWorker --> ONNX[ONNX WebGPU Runtime]
+    ONNX --> LLM[(Local LLM Model)]
+    
+    ONNX --> ResponseGen[Generate Response]
+    ResponseGen --> UI
+    UI --> TTS[Text-to-Speech Engine]
+    TTS --> User
+```
+
+### 5.2 File Indexing & Search RAG Data Flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant SE as Search Engine
+    participant FS as File System
+    participant EXT as Extractors (PDF/OCR)
+    participant VDB as Vector DB / Index
+    participant LLM as Local LLM
+    
+    %% Indexing Phase
+    Note over SE, VDB: 1. Background Indexing Phase
+    FS->>FS: Scan entire Android Root Storage
+    FS->>SE: Yield File List (Text, PDFs, Images)
+    SE->>EXT: Send raw bytes for unsupported formats
+    EXT-->>SE: Return raw text strings
+    SE->>SE: Chunk text into paragraphs
+    SE->>VDB: Store Metadata + Text Chunks
+    
+    %% Retrieval Phase
+    Note over U, LLM: 2. Active Search & Retrieval
+    U->>SE: "What is my March invoice total?"
+    SE->>SE: Tokenize Query ("March", "invoice", "total")
+    SE->>VDB: Query matching paragraphs (BM25 or Cosine)
+    VDB-->>SE: Return top 5 relevant chunks
+    SE->>LLM: Prompt Context: [Chunks] + "Answer the user."
+    LLM-->>U: "Your March invoice total is $3,847.50."
+```
+
+### 5.3 Error Handling & Fallback Strategy (Android 11+)
+
+```mermaid
+flowchart TD
+    Start[Request File Read] --> CapRead[Try Filesystem.readFile]
+    CapRead -- Success --> Parse[Extract Text]
+    CapRead -- Failure --> GetURI[Try Filesystem.getUri]
+    GetURI -- Return URI --> Convert[Capacitor.convertFileSrc]
+    Convert --> Fetch[Try fetch Web URL]
+    Fetch -- Success --> Parse
+    Fetch -- Failure --> NameFallback[Match by Filename Only]
+    NameFallback --> Display[Return Partial Search Result]
+    Parse --> Display
+```
+
+---
+
+## Summary
+Building "Nice" requires a careful balance between modern Web AI (ONNX, Transformers.js) and restrictive Android Native APIs (Scoped Storage, Background Services). By keeping the ML inference inside Web Workers and building robust error catchers/fallbacks for the file system bridge, the application achieves a highly responsive, entirely private assistant experience.

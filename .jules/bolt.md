@@ -1,0 +1,3 @@
+## 2024-05-24 - Array Access Overhead in Hot Loops
+**Learning:** In tight math loops (like `cosineSimilarity` running per chunk during vector retrieval), performing multiple direct array lookups (`a[i]`, `b[i]`) per iteration adds significant overhead. Standard JS arrays suffer more than Float32Arrays, but both are affected. Extracting array lengths and caching `a[i]` and `b[i]` into local block-scoped variables dramatically reduces this overhead.
+**Action:** When implementing mathematical operations over arrays inside a hot path or nested loop, cache array lookups into local variables instead of repeatedly indexing the array within the iteration block.

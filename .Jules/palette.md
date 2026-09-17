@@ -1,0 +1,3 @@
+## 2024-05-18 - Missing ARIA Labels and Focus States on Settings Components
+**Learning:** Found that standard checkboxes disguised as toggle switches lack proper accessibility labels for screen readers. In addition, many interactive elements (buttons, custom toggles) did not have a defined `focus-visible` outline for keyboard navigation, making the app harder to use without a mouse.
+**Action:** Added `aria-label` to all settings toggles and the command input to give screen readers proper context. Added `:focus-visible` styles to provide clear visual feedback during keyboard navigation without disrupting mouse users.

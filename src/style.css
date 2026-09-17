@@ -1871,3 +1871,21 @@ body.light-theme .input-row {
 
 
 
+
+/* Accessibility focus styles for toggle switches and buttons */
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
+.header-btn:focus-visible,
+.settings-btn:focus-visible,
+.settings-close-btn:focus-visible,
+.quick-action:focus-visible,
+.input-btn:focus-visible,
+.file-preview-remove:focus-visible,
+.install-banner-btn:focus-visible,
+.install-banner-dismiss:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}

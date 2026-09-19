@@ -1871,3 +1871,14 @@ body.light-theme .input-row {
 
 
 
+
+/* === Accessibility Enhancements === */
+:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}

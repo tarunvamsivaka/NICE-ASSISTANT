@@ -1542,7 +1542,7 @@ function openWebCamera() {
 
     modal = document.createElement('div');
     modal.id = 'cameraModal'; modal.className = 'camera-modal';
-    modal.innerHTML = `<div class="camera-modal-content"><div class="camera-header"><span>📸 Camera</span><button class="camera-close" id="cameraClose">✕</button></div><video id="cameraVideo" autoplay playsinline></video><div class="camera-actions"><button class="camera-capture-btn" id="cameraCapture">📷 Capture</button></div><canvas id="cameraCanvas" style="display:none;"></canvas></div>`;
+    modal.innerHTML = `<div class="camera-modal-content"><div class="camera-header"><span>📸 Camera</span><button class="camera-close" id="cameraClose" aria-label="Close camera">✕</button></div><video id="cameraVideo" autoplay playsinline></video><div class="camera-actions"><button class="camera-capture-btn" id="cameraCapture">📷 Capture</button></div><canvas id="cameraCanvas" style="display:none;"></canvas></div>`;
     document.body.appendChild(modal);
     requestAnimationFrame(() => modal.classList.add('visible'));
 

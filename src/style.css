@@ -48,6 +48,11 @@ body.light-theme {
   box-sizing: border-box;
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
 html,
 body {
   margin: 0;

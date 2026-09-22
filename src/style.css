@@ -1871,3 +1871,21 @@ body.light-theme .input-row {
 
 
 
+
+/* === Accessibility: Keyboard Focus Styles (2026-03) === */
+:focus-visible {
+  outline: 2px solid var(--accent-secondary, #4ea9ff);
+  outline-offset: 2px;
+}
+
+.command-input:focus-visible {
+  outline: none; /* Already handles focus with a custom box-shadow */
+}
+
+.toggle-switch input:focus-visible + .toggle-slider {
+  box-shadow: 0 0 0 2px var(--bg-1, #0a1121), 0 0 0 4px var(--accent-secondary, #4ea9ff);
+}
+
+body.light-theme .toggle-switch input:focus-visible + .toggle-slider {
+  box-shadow: 0 0 0 2px var(--bg-1, #ffffff), 0 0 0 4px var(--accent-secondary, #1f84e2);
+}

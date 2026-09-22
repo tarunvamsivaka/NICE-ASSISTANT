@@ -1589,6 +1589,7 @@ function showFilePreview(url, name, type, opts = {}) {
     const closeBtn = document.createElement('button');
     closeBtn.className = 'camera-close';
     closeBtn.id = 'previewClose';
+    closeBtn.setAttribute('aria-label', 'Close preview');
     closeBtn.textContent = '✕';
 
     header.appendChild(title);

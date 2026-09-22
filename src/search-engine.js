@@ -414,13 +414,19 @@ function cosineSimilarity(a, b) {
     let dot = 0;
     let normA = 0;
     let normB = 0;
-    for (let i = 0; i < a.length; i++) {
-        dot += a[i] * b[i];
-        normA += a[i] * a[i];
-        normB += b[i] * b[i];
+
+    // Bolt: Cache length and values locally to minimize V8 bounds checks and property lookups in hot loop
+    const len = a.length;
+    for (let i = 0; i < len; i++) {
+        const valA = a[i];
+        const valB = b[i];
+        dot += valA * valB;
+        normA += valA * valA;
+        normB += valB * valB;
     }
-    const denom = Math.sqrt(normA) * Math.sqrt(normB);
-    return denom === 0 ? 0 : dot / denom;
+
+    // Bolt: Multiply before sqrt (mathematically equivalent but slightly faster in V8) and guard against 0
+    return dot / (Math.sqrt(normA * normB) || 1e-9);
 }
 
 function resultIdentity(result) {

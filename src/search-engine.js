@@ -1954,9 +1954,25 @@ async function rerankResultsWithEmbeddings(results, query, opts) {
  * Score a chunk of text against query keywords using BM25-lite.
  * Returns 0 if no match, higher = better.
  */
+// Performance optimization: Avoid expensive regex split and trim for word counting
+function _fastWordCount(str) {
+    let spaces = 0;
+    let wasSpace = true;
+    for (let j = 0; j < str.length; j++) {
+        const char = str.charCodeAt(j);
+        if (char === 32 || char === 9 || char === 10 || char === 13) {
+             wasSpace = true;
+        } else if (wasSpace) {
+             spaces++;
+             wasSpace = false;
+        }
+    }
+    return Math.max(1, spaces);
+}
+
 function scoreChunk(chunkText, query) {
     const chunkLower = chunkText.toLowerCase();
-    const chunkLen = Math.max(1, chunkText.trim().split(/\s+/).length);
+    const chunkLen = _fastWordCount(chunkText);
     if (chunkLen < 3) return 0;
     const keywordMeta = getPreparedKeywordMeta(query);
     if (keywordMeta.length === 0) return 0;

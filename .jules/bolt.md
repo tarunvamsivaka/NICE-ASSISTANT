@@ -1,0 +1,3 @@
+## 2024-05-18 - Fast Word Count Optimization
+**Learning:** In the `scoreChunk` function, splitting a string by whitespace using `split(/\s+/)` just to count the number of words is highly inefficient, especially when processing large amounts of text during search ranking. It creates many temporary string arrays and objects in memory, leading to garbage collection pauses and poor performance.
+**Action:** Replace `split(/\s+/)` with a manual char-by-char loop (`_fastWordCount`) that counts space occurrences to determine the number of words without creating intermediate strings or arrays. This significantly improves text processing speed during search queries.

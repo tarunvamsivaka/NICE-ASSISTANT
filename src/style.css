@@ -1871,3 +1871,25 @@ body.light-theme .input-row {
 
 
 
+
+/* Focus visible states for accessibility */
+.input-btn:focus-visible,
+.header-btn:focus-visible,
+.quick-action:focus-visible,
+.settings-btn:focus-visible,
+.settings-close-btn:focus-visible,
+.suggestion-chip:focus-visible,
+.music-ctrl-btn:focus-visible,
+.install-banner-btn:focus-visible,
+.install-banner-dismiss:focus-visible,
+.camera-close:focus-visible,
+.camera-capture-btn:focus-visible,
+.file-preview-remove:focus-visible {
+  outline: 2px solid rgba(78, 169, 255, 0.8);
+  outline-offset: 2px;
+}
+
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid rgba(78, 169, 255, 0.8);
+  outline-offset: 2px;
+}

@@ -1871,3 +1871,17 @@ body.light-theme .input-row {
 
 
 
+
+.header-btn:focus-visible,
+.input-btn:focus-visible,
+.quick-action:focus-visible,
+.settings-btn:focus-visible,
+.settings-close-btn:focus-visible,
+input[type="range"]:focus-visible,
+.toggle-switch input:focus-visible + .toggle-slider,
+.install-banner-btn:focus-visible,
+.install-banner-dismiss:focus-visible,
+.file-preview-remove:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}

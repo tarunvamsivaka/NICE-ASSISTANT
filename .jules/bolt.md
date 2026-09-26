@@ -1,0 +1,3 @@
+## 2024-05-14 - Array iteration and memory allocation in hot search paths
+**Learning:** Chaining array methods like `.map().filter().sort()` over large arrays (like the 50,000+ item file index in `searchFiles`) is surprisingly expensive because it instantiates intermediate arrays, iterates multiple times, and executes function callbacks (closures) thousands of times, allocating significant memory and stressing the garbage collector.
+**Action:** When performing searches or transformations on very large data structures within hot code paths, use traditional `for` loops. Accumulate matches directly into a results array, and try to hoist string conversions (like `.toLowerCase()`) so they only happen lazily/once per item instead of inside inner loops.

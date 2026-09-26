@@ -900,35 +900,67 @@ export function searchFiles(query) {
     if (!q) return [];
 
     const words = q.split(/\s+/);
+    const scored = [];
+    const numFiles = fileIndex.length;
+    const numWords = words.length;
 
     // Score each file
-    const scored = fileIndex
-        .map(f => {
-            let score = 0;
-            const name = f.nameLower;
+    for (let i = 0; i < numFiles; i++) {
+        const f = fileIndex[i];
+        let score = 0;
+        const name = f.nameLower;
+        let lowerPath = null;
 
-            // Exact name match
-            if (name === q) score += 100;
-            // Name contains full query
-            else if (name.includes(q)) score += 50;
-            // All words found in name
-            else if (words.every(w => name.includes(w))) score += 30;
-            // Some words found
-            else {
-                const matchCount = words.filter(w => name.includes(w) || f.path.toLowerCase().includes(w)).length;
-                if (matchCount > 0) score += matchCount * 10;
+        // Exact name match
+        if (name === q) {
+            score += 100;
+        }
+        // Name contains full query
+        else if (name.includes(q)) {
+            score += 50;
+        }
+        else {
+            let allWordsInName = true;
+            let matchCount = 0;
+            for (let j = 0; j < numWords; j++) {
+                const w = words[j];
+                const inName = name.includes(w);
+                if (!inName) {
+                    allWordsInName = false;
+                }
+                if (inName) {
+                    matchCount++;
+                } else {
+                    if (lowerPath === null) lowerPath = f.path.toLowerCase();
+                    if (lowerPath.includes(w)) {
+                        matchCount++;
+                    }
+                }
             }
 
-            // Path match bonus
-            if (f.path.toLowerCase().includes(q)) score += 5;
+            // All words found in name
+            if (allWordsInName) {
+                score += 30;
+            }
+            // Some words found
+            else if (matchCount > 0) {
+                score += matchCount * 10;
+            }
+        }
 
-            return { ...f, score };
-        })
-        .filter(f => f.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 20);
+        // Path match bonus
+        if (lowerPath === null) lowerPath = f.path.toLowerCase();
+        if (lowerPath.includes(q)) {
+            score += 5;
+        }
 
-    return scored;
+        if (score > 0) {
+            scored.push({ ...f, score });
+        }
+    }
+
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, 20);
 }
 
 function normalizeFileLookupName(value) {

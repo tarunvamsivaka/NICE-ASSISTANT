@@ -496,6 +496,11 @@ body::after {
   height: 0;
 }
 
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
 .toggle-slider {
   position: absolute;
   inset: 0;
@@ -1792,6 +1797,18 @@ body.light-theme .send-btn {
 .header-btn {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+}
+
+.input-btn:focus-visible,
+.quick-action:focus-visible,
+.settings-btn:focus-visible,
+.header-btn:focus-visible,
+.settings-close-btn:focus-visible,
+.file-preview-remove:focus-visible,
+.install-banner-btn:focus-visible,
+.install-banner-dismiss:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
 }
 
 .input-btn:active,

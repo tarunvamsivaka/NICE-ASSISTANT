@@ -482,6 +482,12 @@ body::after {
   accent-color: var(--accent-secondary);
 }
 
+.settings-slider:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 .toggle-switch {
   position: relative;
   display: inline-block;
@@ -519,9 +525,19 @@ body::after {
   transition: transform 200ms ease;
 }
 
+.toggle-switch input:focus-visible + .toggle-slider {
+  box-shadow: 0 0 0 3px rgba(78, 169, 255, 0.3);
+  border-color: rgba(78, 169, 255, 0.6);
+}
+
 .toggle-switch input:checked + .toggle-slider {
   background: linear-gradient(120deg, rgba(41, 211, 193, 0.72), rgba(78, 169, 255, 0.72));
   border-color: rgba(41, 211, 193, 0.5);
+}
+
+.toggle-switch input:checked:focus-visible + .toggle-slider {
+  box-shadow: 0 0 0 3px rgba(41, 211, 193, 0.3);
+  border-color: rgba(41, 211, 193, 0.7);
 }
 
 .toggle-switch input:checked + .toggle-slider::before {

@@ -900,35 +900,51 @@ export function searchFiles(query) {
     if (!q) return [];
 
     const words = q.split(/\s+/);
+    const scored = [];
 
-    // Score each file
-    const scored = fileIndex
-        .map(f => {
-            let score = 0;
-            const name = f.nameLower;
+    // ⚡ Bolt: Rewrote .map().filter() into a single loop to prevent creating
+    // up to 50k temporary objects during search, reducing GC pressure and latency.
+    for (let i = 0; i < fileIndex.length; i++) {
+        const f = fileIndex[i];
+        let score = 0;
+        const name = f.nameLower;
+        let pathLower = null;
 
-            // Exact name match
-            if (name === q) score += 100;
-            // Name contains full query
-            else if (name.includes(q)) score += 50;
-            // All words found in name
-            else if (words.every(w => name.includes(w))) score += 30;
-            // Some words found
-            else {
-                const matchCount = words.filter(w => name.includes(w) || f.path.toLowerCase().includes(w)).length;
-                if (matchCount > 0) score += matchCount * 10;
+        // Exact name match
+        if (name === q) {
+            score += 100;
+        }
+        // Name contains full query
+        else if (name.includes(q)) {
+            score += 50;
+        }
+        // All words found in name
+        else if (words.every(w => name.includes(w))) {
+            score += 30;
+        }
+        // Some words found
+        else {
+            pathLower = (f.path || '').toLowerCase();
+            let matchCount = 0;
+            for (let j = 0; j < words.length; j++) {
+                if (name.includes(words[j]) || pathLower.includes(words[j])) {
+                    matchCount++;
+                }
             }
+            if (matchCount > 0) score += matchCount * 10;
+        }
 
-            // Path match bonus
-            if (f.path.toLowerCase().includes(q)) score += 5;
+        // Path match bonus (only compute lowercase if not already done)
+        if (pathLower === null) pathLower = (f.path || '').toLowerCase();
+        if (pathLower.includes(q)) score += 5;
 
-            return { ...f, score };
-        })
-        .filter(f => f.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 20);
+        // Only allocate object if it matches to save memory
+        if (score > 0) {
+            scored.push({ ...f, score });
+        }
+    }
 
-    return scored;
+    return scored.sort((a, b) => b.score - a.score).slice(0, 20);
 }
 
 function normalizeFileLookupName(value) {

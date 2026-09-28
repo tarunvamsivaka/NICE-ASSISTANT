@@ -764,7 +764,8 @@ function countKeywordHits(lowerText, keyword) {
     if (!isSearchSignalToken(kw)) return 0;
 
     const escaped = escapeRegExp(kw);
-    const exactRegex = new RegExp('\\b' + escaped + '\\b', 'g');
+    // Use word boundaries that are safe for non-word characters by falling back to boundary or start/end of string.
+    const exactRegex = new RegExp(`(?:^|\\W)${escaped}(?:\\W|$)`, 'g');
     const exactMatches = lowerText.match(exactRegex);
     if (exactMatches && exactMatches.length > 0) {
         return exactMatches.length;
@@ -791,7 +792,7 @@ function getPreparedKeywordMeta(query = {}) {
     const uniq = [...new Set(keywordPool)];
     const prepared = uniq.map((kw) => ({
         token: kw,
-        regex: new RegExp(`\\b${escapeRegExp(kw)}\\b`, 'g'),
+        regex: new RegExp(`(?:^|\\W)${escapeRegExp(kw)}(?:\\W|$)`, 'g'),
         allowSubstring: kw.length >= 6,
     }));
 
@@ -831,6 +832,8 @@ function countMatchedQueryKeywords(text, keywords = []) {
     return matched;
 }
 
+const _strongSignalCache = new WeakMap();
+
 function hasStrongQuerySignal(text, query = {}) {
     const source = String(text || '');
     if (!source.trim()) return false;
@@ -841,30 +844,40 @@ function hasStrongQuerySignal(text, query = {}) {
         if (DOB_SIGNAL_PATTERN.test(source) && DATE_PATTERN.test(source)) return true;
     }
 
-    const keywordPool = [...new Set(normalizeKeywordVariants(query.keywords || []).filter(isSearchSignalToken))];
-    const targetPhrase = String(query.target || query.raw || '').toLowerCase().trim();
-    if (targetPhrase.length >= 4 && sourceLower.includes(targetPhrase)) {
+    let cached = _strongSignalCache.get(query);
+    if (!cached) {
+        const keywordPool = [...new Set(normalizeKeywordVariants(query.keywords || []).filter(isSearchSignalToken))];
+        const targetPhrase = String(query.target || query.raw || '').toLowerCase().trim();
+
+        const strictPool = [...new Set(
+            extractKeywords(query.target || query.raw || '')
+                .map(kw => kw.toLowerCase().trim())
+                .filter(isSearchSignalToken),
+        )];
+        const fallbackPool = strictPool.length > 0
+            ? strictPool
+            : (keywordPool.length > 0 ? keywordPool : extractKeywords(query.target || query.raw || ''));
+
+        cached = {
+            targetPhrase,
+            fallbackPool,
+        };
+        _strongSignalCache.set(query, cached);
+    }
+
+    if (cached.targetPhrase.length >= 4 && sourceLower.includes(cached.targetPhrase)) {
         return true;
     }
 
-    const strictPool = [...new Set(
-        extractKeywords(query.target || query.raw || '')
-            .map(kw => kw.toLowerCase().trim())
-            .filter(isSearchSignalToken),
-    )];
-    const fallbackPool = strictPool.length > 0
-        ? strictPool
-        : (keywordPool.length > 0 ? keywordPool : extractKeywords(query.target || query.raw || ''));
-
-    if (fallbackPool.length === 0) {
+    if (cached.fallbackPool.length === 0) {
         return source.trim().length > 0;
     }
 
-    const matched = countMatchedQueryKeywords(source, fallbackPool);
+    const matched = countMatchedQueryKeywords(sourceLower, cached.fallbackPool);
     let minimumHits = 1;
-    if (fallbackPool.length >= 5) minimumHits = 3;
-    else if (fallbackPool.length >= 3) minimumHits = 2;
-    minimumHits = Math.min(minimumHits, fallbackPool.length);
+    if (cached.fallbackPool.length >= 5) minimumHits = 3;
+    else if (cached.fallbackPool.length >= 3) minimumHits = 2;
+    minimumHits = Math.min(minimumHits, cached.fallbackPool.length);
     return matched >= minimumHits;
 }
 function normalizeKeywordVariants(keywords) {

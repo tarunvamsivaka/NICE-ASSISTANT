@@ -71,6 +71,10 @@ const WORD_OPERATORS = {
   percent: '%', percentage: '%',
 };
 
+// ⚡ Bolt: Precompiled Regex for isWordMath to prevent repeatedly compiling them in loops
+const precompiledHasWordNumbersRegex = new RegExp(`\\b(${Object.keys(WORD_NUMS).join('|')})\\b`);
+const precompiledHasOpsRegex = new RegExp(`\\b(${Object.keys(WORD_OPERATORS).map(w => w.replace(/\s+/g, '\\s+')).join('|')})\\b`);
+
 /**
  * Convert English word math to numeric expression
  * e.g. "five plus three" → "5 + 3", "twenty times four" → "20 * 4"
@@ -151,15 +155,9 @@ function isWordMath(text) {
     .replace(/^(?:what\s+is|calculate|compute|solve|how\s+much\s+is|eval)\s+/i, '')
     .replace(/\?$/, '').trim();
 
-  // Check: word-number + word-operator ("five plus three")
-  const hasWordNumbers = Object.keys(WORD_NUMS).some(w => {
-    const regex = new RegExp(`\\b${w}\\b`);
-    return regex.test(lower);
-  });
-  const hasOps = Object.keys(WORD_OPERATORS).some(w => {
-    const regex = new RegExp(`\\b${w.replace(/\s+/g, '\\s+')}\\b`);
-    return regex.test(lower);
-  });
+  // ⚡ Bolt: Check using precompiled Regex instead of instantiating Regex ~50 times in a loop
+  const hasWordNumbers = precompiledHasWordNumbersRegex.test(lower);
+  const hasOps = precompiledHasOpsRegex.test(lower);
 
   // Original: both word numbers and word operators
   if (hasWordNumbers && hasOps) return true;

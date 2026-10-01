@@ -1,0 +1,3 @@
+## 2024-03-24 - Cache Object-bound Query Signals with WeakMap
+**Learning:** Mutating the original query object during search processing is an anti-pattern. However, recomputing parsed signals (like extracting keywords, determining fallback pools, building target phrases) for every paragraph evaluated inside a tight search loop causes massive overhead through redundant string allocations and array operations.
+**Action:** Use a `WeakMap` linked to the original `query` object to cache parsed signals (like `targetPhrase` and `fallbackPool`). This guarantees the signals are computed exactly once per query and automatically garbage collected when the query object is destroyed, preserving memory safety while accelerating chunk evaluation.

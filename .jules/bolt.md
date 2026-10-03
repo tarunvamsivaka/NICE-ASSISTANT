@@ -1,0 +1,3 @@
+## 2024-10-24 - Avoiding Expensive String Operations and Object Mutations in Tight Loops via WeakMap
+**Learning:** In highly repetitive scoring loops over documents, mutating input query objects or repeatedly extracting tokens/keywords creates significant performance overhead due to constant re-evaluation of regular expressions and repeated array iterations.
+**Action:** Use a module-level `WeakMap` linked directly to the `query` object to securely memoize and cache extracted search signals (like tokens, regex patterns, and fallback pools) without mutating the original object or holding onto stale memory references.

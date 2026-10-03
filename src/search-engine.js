@@ -784,8 +784,11 @@ function countKeywordHits(lowerText, keyword) {
     return 0;
 }
 
+// BOLT OPTIMIZATION: Cache extracted search tokens against query object to avoid repetitive regex evaluation in loops
+const _keywordMetaCache = new WeakMap();
+
 function getPreparedKeywordMeta(query = {}) {
-    if (Array.isArray(query._keywordMeta)) return query._keywordMeta;
+    if (_keywordMetaCache.has(query)) return _keywordMetaCache.get(query);
 
     const keywordPool = normalizeKeywordVariants(query.keywords || []).filter(isSearchSignalToken);
     const uniq = [...new Set(keywordPool)];
@@ -795,7 +798,7 @@ function getPreparedKeywordMeta(query = {}) {
         allowSubstring: kw.length >= 6,
     }));
 
-    query._keywordMeta = prepared;
+    _keywordMetaCache.set(query, prepared);
     return prepared;
 }
 
@@ -831,6 +834,9 @@ function countMatchedQueryKeywords(text, keywords = []) {
     return matched;
 }
 
+// BOLT OPTIMIZATION: Memoize string operations and array allocations for fallbackPool/targetPhrase to avoid overhead per paragraph
+const _hasStrongQuerySignalCache = new WeakMap();
+
 function hasStrongQuerySignal(text, query = {}) {
     const source = String(text || '');
     if (!source.trim()) return false;
@@ -841,20 +847,27 @@ function hasStrongQuerySignal(text, query = {}) {
         if (DOB_SIGNAL_PATTERN.test(source) && DATE_PATTERN.test(source)) return true;
     }
 
-    const keywordPool = [...new Set(normalizeKeywordVariants(query.keywords || []).filter(isSearchSignalToken))];
-    const targetPhrase = String(query.target || query.raw || '').toLowerCase().trim();
+    let querySignals = _hasStrongQuerySignalCache.get(query);
+    if (!querySignals) {
+        const keywordPool = [...new Set(normalizeKeywordVariants(query.keywords || []).filter(isSearchSignalToken))];
+        const targetPhrase = String(query.target || query.raw || '').toLowerCase().trim();
+        const strictPool = [...new Set(
+            extractKeywords(query.target || query.raw || '')
+                .map(kw => kw.toLowerCase().trim())
+                .filter(isSearchSignalToken),
+        )];
+        const fallbackPool = strictPool.length > 0
+            ? strictPool
+            : (keywordPool.length > 0 ? keywordPool : extractKeywords(query.target || query.raw || ''));
+        querySignals = { keywordPool, targetPhrase, fallbackPool };
+        _hasStrongQuerySignalCache.set(query, querySignals);
+    }
+
+    const { targetPhrase, fallbackPool } = querySignals;
+
     if (targetPhrase.length >= 4 && sourceLower.includes(targetPhrase)) {
         return true;
     }
-
-    const strictPool = [...new Set(
-        extractKeywords(query.target || query.raw || '')
-            .map(kw => kw.toLowerCase().trim())
-            .filter(isSearchSignalToken),
-    )];
-    const fallbackPool = strictPool.length > 0
-        ? strictPool
-        : (keywordPool.length > 0 ? keywordPool : extractKeywords(query.target || query.raw || ''));
 
     if (fallbackPool.length === 0) {
         return source.trim().length > 0;
@@ -2977,14 +2990,31 @@ function getPrimaryQuerySubject(query = {}) {
     return tokens.slice(0, 6).join(' ');
 }
 
+// BOLT OPTIMIZATION: Cache regex testing results per query to avoid tight-loop recalculations in scoreSentenceForQuery
+const _queryWantsAimLineCache = new WeakMap();
+
 function queryWantsAimLine(query = {}) {
+    if (_queryWantsAimLineCache.has(query)) return _queryWantsAimLineCache.get(query);
+
     const raw = String(query?.raw || query?.target || '').toLowerCase();
-    if (/\b(?:aim|objective)\b/.test(raw)) return true;
-    return (query?.keywords || []).some(token => /^(aim|objective)$/.test(String(token || '').toLowerCase()));
+    let result = false;
+    if (/\b(?:aim|objective)\b/.test(raw)) {
+        result = true;
+    } else {
+        result = (query?.keywords || []).some(token => /^(aim|objective)$/.test(String(token || '').toLowerCase()));
+    }
+
+    _queryWantsAimLineCache.set(query, result);
+    return result;
 }
 
+// BOLT OPTIMIZATION: Cache expensive token extraction per query, preventing redundant Set/Array allocations per sentence
+const _extractNumericQueryTokensCache = new WeakMap();
+
 function extractNumericQueryTokens(query = {}) {
-    return [...new Set(
+    if (_extractNumericQueryTokensCache.has(query)) return _extractNumericQueryTokensCache.get(query);
+
+    const tokens = [...new Set(
         [
             ...extractKeywords(query?.target || query?.raw || ''),
             ...(Array.isArray(query?.keywords) ? query.keywords : []),
@@ -2992,6 +3022,9 @@ function extractNumericQueryTokens(query = {}) {
             .map(token => String(token || '').trim().toLowerCase())
             .filter(token => /^\d{1,4}$/.test(token)),
     )];
+
+    _extractNumericQueryTokensCache.set(query, tokens);
+    return tokens;
 }
 
 function scoreSentenceForQuery(sentence, query, mode = 'general') {

@@ -506,6 +506,11 @@ body::after {
   transition: 200ms ease;
 }
 
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
 .toggle-slider::before {
   content: "";
   position: absolute;

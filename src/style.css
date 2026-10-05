@@ -528,6 +528,11 @@ body::after {
   transform: translateX(22px);
 }
 
+.toggle-switch input:focus-visible + .toggle-slider {
+  border-color: rgba(78, 169, 255, 0.64);
+  box-shadow: 0 0 0 3px rgba(78, 169, 255, 0.16);
+}
+
 .settings-actions {
   display: grid;
   gap: 8px;

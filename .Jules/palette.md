@@ -1,0 +1,3 @@
+## 2024-03-20 - Toggle Switch Accessibility Pattern
+**Learning:** Found an accessibility issue pattern with custom `.toggle-switch` components in this app. The native `<input type="checkbox">` elements were hidden using `opacity: 0` but lacked both `aria-label`s for screen readers and visible focus states for keyboard navigation.
+**Action:** When creating or modifying custom UI elements that hide native inputs (like `.toggle-switch` checkboxes with `opacity: 0`), manually add a `:focus-visible` CSS outline to the visible sibling element and ensure the hidden input has an `aria-label` attribute to maintain keyboard and screen reader accessibility.

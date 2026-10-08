@@ -519,6 +519,12 @@ body::after {
   transition: transform 200ms ease;
 }
 
+
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
 .toggle-switch input:checked + .toggle-slider {
   background: linear-gradient(120deg, rgba(41, 211, 193, 0.72), rgba(78, 169, 255, 0.72));
   border-color: rgba(41, 211, 193, 0.5);

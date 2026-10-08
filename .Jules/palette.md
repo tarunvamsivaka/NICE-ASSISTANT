@@ -1,0 +1,3 @@
+## 2024-10-08 - Accessible Custom Toggle Switches
+**Learning:** When creating custom UI elements that hide native inputs (like `.toggle-switch` checkboxes with `opacity: 0`), they lose their default focus outline and implicit accessibility. The screen reader will read the input as a generic checkbox without context, and keyboard users won't see when it has focus.
+**Action:** Manually add a `:focus-visible` CSS outline to the visible sibling element (e.g., the `.toggle-slider`) and ensure the hidden input has an explicit `aria-label` attribute to maintain keyboard and screen reader accessibility.

@@ -1,0 +1,3 @@
+## 2024-05-24 - Optimizing Vector Math Performance
+**Learning:** For performance-critical math operations over large arrays (like vector cosine similarity in `src/vector-store.js`), traditional loops are significantly slower. Loop unrolling (e.g., processing in batches of 4) and combining repetitive Math function calls (like replacing two `Math.sqrt` calls with one on the multiplied value) can drastically reduce execution time in JavaScript engines.
+**Action:** When implementing or refactoring functions that iterate over large numerical arrays, look for opportunities to unroll the loop and minimize calls to standard Math functions.

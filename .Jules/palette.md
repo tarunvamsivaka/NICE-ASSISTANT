@@ -1,0 +1,3 @@
+## 2023-10-09 - Accessible Hidden Inputs for Custom Toggles
+**Learning:** When using custom toggle switch UI patterns (where the native checkbox is hidden via `opacity: 0`), it becomes impossible for keyboard users to see the focus state on the visually hidden element, and screen readers may not read out the label if it's missing or disconnected.
+**Action:** Always ensure that an `aria-label` is provided on the hidden input. Additionally, apply a `:focus-visible` pseudo-class to the hidden input and visually display the outline on its visible sibling element (e.g., `input:focus-visible + .toggle-slider`).

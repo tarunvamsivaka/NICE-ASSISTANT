@@ -76,12 +76,25 @@ function cosineSimilarity(a, b) {
     let dot = 0;
     let normA = 0;
     let normB = 0;
-    for (let i = 0; i < a.length; i++) {
+    const len = a.length;
+    let i = 0;
+
+    // ⚡ Bolt Optimization: Loop unrolling (batches of 4) to minimize loop overhead for large vectors
+    for (; i <= len - 4; i += 4) {
+        dot += a[i] * b[i] + a[i + 1] * b[i + 1] + a[i + 2] * b[i + 2] + a[i + 3] * b[i + 3];
+        normA += a[i] * a[i] + a[i + 1] * a[i + 1] + a[i + 2] * a[i + 2] + a[i + 3] * a[i + 3];
+        normB += b[i] * b[i] + b[i + 1] * b[i + 1] + b[i + 2] * b[i + 2] + b[i + 3] * b[i + 3];
+    }
+
+    // Handle remaining elements
+    for (; i < len; i++) {
         dot += a[i] * b[i];
         normA += a[i] * a[i];
         normB += b[i] * b[i];
     }
-    const denom = Math.sqrt(normA) * Math.sqrt(normB);
+
+    // ⚡ Bolt Optimization: Combine repetitive Math function calls to optimize execution time
+    const denom = Math.sqrt(normA * normB);
     return denom === 0 ? 0 : dot / denom;
 }
 

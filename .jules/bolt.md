@@ -1,0 +1,3 @@
+## 2024-03-20 - [Loop Unrolling for Vector Similarity]
+**Learning:** For performance-critical math operations over large arrays (like vector cosine similarity in search algorithms), standard tight loops can introduce measurable overhead compared to manually unrolled loops. Combining repetitive `Math` function calls (like `Math.sqrt(a) * Math.sqrt(b)` into `Math.sqrt(a * b)`) also provides execution time benefits in JavaScript engines.
+**Action:** When implementing or optimizing vector math or other array-intensive operations, prefer loop unrolling (e.g., processing in batches of 4) and consolidate native Math function calls to optimize execution time without sacrificing functional correctness.

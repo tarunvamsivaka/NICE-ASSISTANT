@@ -482,6 +482,12 @@ body::after {
   accent-color: var(--accent-secondary);
 }
 
+.settings-slider:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .toggle-switch {
   position: relative;
   display: inline-block;
@@ -526,6 +532,11 @@ body::after {
 
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(22px);
+}
+
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
 }
 
 .settings-actions {

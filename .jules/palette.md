@@ -1,0 +1,3 @@
+## 2025-03-04 - Hidden Native Inputs Accessibility
+**Learning:** Visually hidden native inputs (like `.toggle-switch` checkboxes with `opacity: 0`) still receive keyboard focus but fail to provide visual feedback to users, leading to a broken accessibility experience. Furthermore, because they lack visible text, screen readers won't announce them properly without explicit labels.
+**Action:** Always add a `:focus-visible` CSS outline to the visible sibling element (e.g. `.toggle-switch input:focus-visible + .toggle-slider { outline: ... }`) and ensure the hidden input has a descriptive `aria-label` attribute to maintain both keyboard and screen reader accessibility.

@@ -1,0 +1,3 @@
+## 2024-03-24 - Accessibility of hidden native inputs in custom UI
+**Learning:** Custom UI elements that hide native inputs (like `.toggle-switch` checkboxes with `opacity: 0`) lose their default browser focus ring, making them inaccessible to keyboard users unless explicitly styled. Furthermore, visually hidden inputs often lack contextual labels for screen readers.
+**Action:** When styling custom UI elements that obscure native inputs, always add a `:focus-visible` CSS outline to the visible sibling element (e.g., using `input:focus-visible + .visible-element`) and ensure the hidden input has a descriptive `aria-label` attribute to maintain full keyboard and screen reader accessibility.

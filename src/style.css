@@ -496,6 +496,11 @@ body::after {
   height: 0;
 }
 
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
 .toggle-slider {
   position: absolute;
   inset: 0;

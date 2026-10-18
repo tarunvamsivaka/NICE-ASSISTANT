@@ -1,0 +1,3 @@
+## 2024-11-25 - Custom Toggle Switch Accessibility
+**Learning:** Custom UI elements like toggle switches that hide native inputs (`opacity: 0`) lose their default browser focus outlines. Without explicit styling, keyboard users have no visual indication of which setting they are currently focused on, severely impacting accessibility.
+**Action:** When creating or modifying custom UI elements that hide native inputs, manually add a `:focus-visible` CSS outline to the visible sibling element and ensure the hidden input has an `aria-label` attribute to maintain keyboard and screen reader accessibility.

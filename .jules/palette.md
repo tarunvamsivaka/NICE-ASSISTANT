@@ -1,0 +1,3 @@
+## 2024-10-19 - Accessible Visually Hidden Toggle Inputs
+**Learning:** Custom UI toggle components (like switches using opacity: 0 checkboxes) often lose keyboard accessibility out-of-the-box. When building `.toggle-switch` wrappers, standard browser focus rings aren't visible since the checkbox itself is invisible. Playwright evaluations showed standard wait mechanisms fail for invisible elements.
+**Action:** When creating or modifying custom UI elements that hide native inputs, manually apply a `:focus-visible` state to the hidden input and map it to draw an outline on its visible sibling (`input:focus-visible + .toggle-slider`). Add `aria-label` directly to the hidden input to ensure it is correctly announced by screen readers.

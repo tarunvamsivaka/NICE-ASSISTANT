@@ -70,18 +70,27 @@ async function decodeRecord(record) {
     };
 }
 
+// ⚡ Bolt Optimization: Manually unroll the loop in batches of 4 and combine Math.sqrt
+// calls to significantly speed up cosine similarity computations over large embedding vectors.
 function cosineSimilarity(a, b) {
     if (!Array.isArray(a) || !Array.isArray(b)) return 0;
     if (a.length !== b.length) return 0;
     let dot = 0;
     let normA = 0;
     let normB = 0;
-    for (let i = 0; i < a.length; i++) {
+    const len = a.length;
+    let i = 0;
+    for (; i <= len - 4; i += 4) {
+        dot += a[i] * b[i] + a[i+1] * b[i+1] + a[i+2] * b[i+2] + a[i+3] * b[i+3];
+        normA += a[i] * a[i] + a[i+1] * a[i+1] + a[i+2] * a[i+2] + a[i+3] * a[i+3];
+        normB += b[i] * b[i] + b[i+1] * b[i+1] + b[i+2] * b[i+2] + b[i+3] * b[i+3];
+    }
+    for (; i < len; i++) {
         dot += a[i] * b[i];
         normA += a[i] * a[i];
         normB += b[i] * b[i];
     }
-    const denom = Math.sqrt(normA) * Math.sqrt(normB);
+    const denom = Math.sqrt(normA * normB);
     return denom === 0 ? 0 : dot / denom;
 }
 

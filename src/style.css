@@ -528,6 +528,11 @@ body::after {
   transform: translateX(22px);
 }
 
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
 .settings-actions {
   display: grid;
   gap: 8px;

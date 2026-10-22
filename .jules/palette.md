@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessible custom toggle switches
+**Learning:** Native `<input type="checkbox">` elements hidden with `opacity: 0` for styling purposes lose their visual focus indicators. Standard interaction doesn't show keyboard focus for accessibility users, and testing requires `page.evaluate` or explicit state attachment checks in Playwright.
+**Action:** Always manually add `:focus-visible` pseudo-class styles (like an outline) to the visible sibling element (e.g. the slider or label) triggered by the hidden input's focus state, and add an `aria-label` to the hidden input so screen readers can describe the purpose of the custom UI control.

@@ -1,0 +1,3 @@
+## 2026-10-24 - Custom Toggle Switches Focus and Accessibility
+**Learning:** Custom UI elements that hide native inputs (like `.toggle-switch` checkboxes with `opacity: 0`) lose default focus visibility and screen reader labels. Without explicit `aria-label` attributes on the hidden inputs and `:focus-visible` CSS outlines on the visible siblings, keyboard navigation and screen reader accessibility are severely compromised.
+**Action:** When creating or modifying custom UI elements that hide native inputs, manually add a `:focus-visible` CSS outline to the visible sibling element and ensure the hidden input has an `aria-label` attribute.

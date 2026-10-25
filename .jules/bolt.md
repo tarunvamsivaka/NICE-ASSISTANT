@@ -1,0 +1,3 @@
+## 2024-10-25 - [Cosine Similarity Micro-optimizations]
+**Learning:** For performance-critical math operations over large arrays (like vector cosine similarity), avoid manual loop unrolling as it harms readability and is automatically handled by modern JIT compilers (like V8). Combining Math function calls (e.g., `Math.sqrt(a * b)` instead of `Math.sqrt(a) * Math.sqrt(b)`), caching `.length` in a local variable, and using local block-scoped vars for array indexing (`const ai = a[i]`) can provide measurable performance improvements without sacrificing readability.
+**Action:** Always prefer these clean micro-optimizations over manual loop unrolling for math operations on large arrays.

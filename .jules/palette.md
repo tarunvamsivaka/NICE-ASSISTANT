@@ -1,0 +1,3 @@
+## 2024-05-19 - Accessible Hidden Inputs in Custom Components
+**Learning:** Native checkbox inputs used within custom UI elements (like `.toggle-switch`) that have `opacity: 0` are completely inaccessible unless manually managed. They do not show native focus outlines for keyboard users, and without labels, screen readers announce them as blank inputs.
+**Action:** Always add an `aria-label` to the visually hidden `<input>` inside custom toggles, and use the `.toggle-switch input:focus-visible + .toggle-slider` selector pattern to render a custom focus outline on the visible sibling element when the input receives focus.

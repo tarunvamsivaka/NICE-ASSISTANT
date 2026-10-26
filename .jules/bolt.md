@@ -1,0 +1,3 @@
+## 2024-10-26 - Optimized cosine similarity for vectors
+ **Learning:** Modern JS engines (like V8) are very fast, but for extremely tight math loops iterating over large arrays (like calculating cosine similarity for embeddings), micro-optimizations inside the loop such as avoiding property lookups (`a.length`), minimizing array element access (`const ai = a[i]`), and combining expensive `Math` calls outside the loop can yield measurable performance improvements without sacrificing readability. Manual loop unrolling is not necessary.
+ **Action:** When working with math operations over large arrays (like embeddings), apply clean micro-optimizations: cache `.length`, use block-scoped vars for array indexing, and combine Math functions.

@@ -1,0 +1,3 @@
+## 2025-03-09 - Vector Cosine Similarity V8 Loop Optimization
+**Learning:** Avoid manual loop unrolling for math over large arrays, as it harms readability and V8 compiler already optimizes loops. Instead, apply clean micro-optimizations: cache `.length`, use block-scoped local variables for array index access (e.g. `const ai = a[i]`), and minimize repeated Math function calls by combining them (e.g., `Math.sqrt(normA * normB)` instead of `Math.sqrt(normA) * Math.sqrt(normB)`). This reduces vector operations time significantly on JS engines.
+**Action:** Always apply these clean micro-optimizations inside heavy loops to help JIT compilers (V8) run faster, instead of relying on manual unrolling which increases code size without benefiting performance.

@@ -410,16 +410,24 @@ async function setCachedChunkEmbedding(cacheKey, vector) {
 }
 
 function cosineSimilarity(a, b) {
-    if (!a || !b || a.length !== b.length) return 0;
+    if (!a || !b) return 0;
+    // ⚡ Bolt: Cache length to avoid repeated property lookups in the loop condition
+    const len = a.length;
+    if (len !== b.length) return 0;
+
     let dot = 0;
     let normA = 0;
     let normB = 0;
-    for (let i = 0; i < a.length; i++) {
-        dot += a[i] * b[i];
-        normA += a[i] * a[i];
-        normB += b[i] * b[i];
+    for (let i = 0; i < len; i++) {
+        // ⚡ Bolt: Use block-scoped local variables for array indexing to help V8 optimize
+        const ai = a[i];
+        const bi = b[i];
+        dot += ai * bi;
+        normA += ai * ai;
+        normB += bi * bi;
     }
-    const denom = Math.sqrt(normA) * Math.sqrt(normB);
+    // ⚡ Bolt: Combine Math.sqrt calls to reduce overhead
+    const denom = Math.sqrt(normA * normB);
     return denom === 0 ? 0 : dot / denom;
 }
 

@@ -528,6 +528,10 @@ body::after {
   transform: translateX(22px);
 }
 
+.toggle-switch input:focus-visible + .toggle-slider {
+  box-shadow: 0 0 0 2px var(--bg-0), 0 0 0 4px var(--accent-secondary);
+}
+
 .settings-actions {
   display: grid;
   gap: 8px;

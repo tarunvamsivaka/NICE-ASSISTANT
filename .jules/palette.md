@@ -1,0 +1,3 @@
+## 2026-10-28 - Custom toggle switch accessibility
+**Learning:** Custom UI elements like toggle switches that visually hide native inputs (`opacity: 0`) require special attention for keyboard access and screen readers. Without an explicit `aria-label`, screen readers won't know what the toggle controls. Furthermore, since the input is invisible, native focus styles aren't seen, requiring custom `:focus-visible` styles applied to the visible sibling element.
+**Action:** Always verify that hidden inputs in custom controls have clear `aria-label` attributes and that the visually focused sibling correctly mirrors the focus state (e.g. using `input:focus-visible + .sibling-class`).

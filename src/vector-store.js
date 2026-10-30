@@ -70,18 +70,22 @@ async function decodeRecord(record) {
     };
 }
 
+// ⚡ Bolt Optimization: Use local block-scoped vars for array indexing, cache length, and combine Math.sqrt
 function cosineSimilarity(a, b) {
     if (!Array.isArray(a) || !Array.isArray(b)) return 0;
-    if (a.length !== b.length) return 0;
+    const len = a.length;
+    if (len !== b.length) return 0;
     let dot = 0;
     let normA = 0;
     let normB = 0;
-    for (let i = 0; i < a.length; i++) {
-        dot += a[i] * b[i];
-        normA += a[i] * a[i];
-        normB += b[i] * b[i];
+    for (let i = 0; i < len; i++) {
+        const ai = a[i];
+        const bi = b[i];
+        dot += ai * bi;
+        normA += ai * ai;
+        normB += bi * bi;
     }
-    const denom = Math.sqrt(normA) * Math.sqrt(normB);
+    const denom = Math.sqrt(normA * normB);
     return denom === 0 ? 0 : dot / denom;
 }
 

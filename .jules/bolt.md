@@ -1,0 +1,3 @@
+## 2024-11-01 - Micro-optimizations in Vector Math
+**Learning:** For performance-critical math operations over large arrays (like vector cosine similarity), manual loop unrolling harms readability and is automatically handled by modern JIT compilers (like V8). Clean micro-optimizations like caching `.length` in a local variable, using local block-scoped vars for array indexing (`const ai = a[i]`), and combining Math function calls (`Math.sqrt(a * b)`) provide cleaner performance benefits.
+**Action:** Prioritize these clean micro-optimizations (caching `.length`, local variables, combining Math functions) over manual loop unrolling for math-heavy operations.

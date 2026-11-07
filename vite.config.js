@@ -29,7 +29,7 @@ export default defineConfig({
             output: {
                 manualChunks: {
                     pdf: ['pdfjs-dist'],
-                    ml_core: ['@xenova/transformers', 'onnxruntime-web'],
+                    ml_core: ['@xenova/transformers'],
                     ocr: ['tesseract.js'],
                 },
             },

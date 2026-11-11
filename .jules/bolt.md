@@ -1,0 +1,3 @@
+## 2024-05-24 - V8 Vector Math Optimizations
+**Learning:** Modern JIT compilers (like V8) automatically handle loop unrolling. Manual loop unrolling harms readability without providing a speedup. However, caching array length, using local block-scoped variables for array indexing, and combining `Math` function calls are clean micro-optimizations that V8 engines can easily leverage for performance-critical math operations.
+**Action:** For heavy array processing (like cosine similarity), avoid manual loop unrolling, cache `.length` in a local variable, use block-scoped variables for array elements, and group `Math` calls (e.g., `Math.sqrt(a * b)` instead of `Math.sqrt(a) * Math.sqrt(b)`).

@@ -527,6 +527,11 @@ body::after {
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(22px);
 }
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
 
 .settings-actions {
   display: grid;
